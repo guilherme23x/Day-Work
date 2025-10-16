@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Pessoal</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page-container">
+      <div class="dashboard-container">
+        <nav class="sidebar collapsed" id="sidebar">
+          <div class="sidebar-profile">
+            <label for="profile-pic-input" class="profile-pic-container">
+              <img
+                id="profile-pic"
+                src="https://i.ibb.co/6n0rcrF/default-avatar.png"
+                alt="Foto de Perfil"
+              />
+            </label>
+            <input
+              type="file"
+              id="profile-pic-input"
+              accept="image/*"
+              style="display: none"
+            />
+            <div class="profile-info">
+              <h2 id="user-name-display">Seu Nome</h2>
+              <div class="profile-details">
+                <p id="user-role-display">Seu Cargo</p>
+                <p id="company-display">Sua Empresa</p>
+                <p id="workload-display">09:00 - 18:00</p>
+              </div>
+            </div>
+            <button
+              class="settings-btn"
+              id="settings-btn"
+              title="Configurações"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="3"></circle>
+                <path
+                  d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <ul class="sidebar-nav">
+            <li class="nav-item active" data-category="work">
+              <a href="#" class="nav-link" title="Trabalho">
+                <img src="icons/work.svg" alt="Trabalho" />
+              </a>
+            </li>
+            <li class="nav-item" data-category="leisure">
+              <a href="#" class="nav-link" title="Lazer">
+                <img src="icons/lazer.svg" alt="Lazer" />
+              </a>
+            </li>
+            <li class="nav-item" data-category="tools">
+              <a href="#" class="nav-link" title="Ferramentas">
+                <img src="icons/tools.svg" alt="Ferramentas" />
+              </a>
+            </li>
+          </ul>
+          <div class="sidebar-footer">
+            <button
+              class="sidebar-toggle"
+              id="sidebar-toggle"
+              title="Expandir/Recolher"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+        </nav>
+
+        <main class="main-content">
+          <header class="main-header">
+            <div class="search-box">
+              <img
+                src="icons/pesquisa.svg"
+                alt="Pesquisar"
+                class="search-icon"
+              />
+              <input type="text" id="search-input" placeholder="Search..." />
+            </div>
+            <button class="add-new-btn" id="add-card-header-btn">
+              <img src="icons/adicionar.svg" alt="Adicionar" />
+              <span>Adicionar</span>
+            </button>
+          </header>
+
+          <section class="content-section">
+            <h1 id="category-title">Trabalho</h1>
+            <div id="card-grid" class="card-grid"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div id="card-modal" class="modal"></div>
+
+    <div id="settings-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" id="close-settings-btn">&times;</span>
+        <h2>Configurações</h2>
+        <form id="settings-form">
+          <div class="form-group">
+            <label for="user-name-input">Nome</label>
+            <input type="text" id="user-name-input" />
+          </div>
+          <div class="form-group">
+            <label for="user-role-input">Cargo</label>
+            <input type="text" id="user-role-input" />
+          </div>
+          <div class="form-group">
+            <label for="company-input">Empresa</label>
+            <input type="text" id="company-input" />
+          </div>
+          <div class="form-group form-group-inline">
+            <div>
+              <label for="start-time-input">Início</label>
+              <input type="time" id="start-time-input" />
+            </div>
+            <div>
+              <label for="end-time-input">Fim</label>
+              <input type="time" id="end-time-input" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tema</label>
+            <div class="theme-switcher">
+              <button type="button" data-theme="light" class="theme-btn active">
+                Claro
+              </button>
+              <button type="button" data-theme="dark" class="theme-btn">
+                Escuro
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="bg-upload-input" class="file-upload-label">
+              <img src="icons/fundo.svg" alt="Fundo" />
+              Alterar Plano de Fundo
+            </label>
+            <input type="file" id="bg-upload-input" accept="image/*" />
+          </div>
+          <div class="form-group">
+            <label>Gerenciar Dados</label>
+            <div class="data-actions">
+              <button type="button" id="export-btn" class="file-action-btn">
+                Exportar Dados
+              </button>
+              <label for="import-input" class="file-action-btn"
+                >Importar Dados</label
+              >
+              <input type="file" id="import-input" accept=".json" />
+            </div>
+          </div>
+          <button type="submit" id="save-settings-btn">Salvar</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
