@@ -30,14 +30,6 @@
               accept="image/*"
               style="display: none"
             />
-            <div class="profile-info">
-              <h2 id="user-name-display">Seu Nome</h2>
-              <div class="profile-details">
-                <p id="user-role-display">Seu Cargo</p>
-                <p id="company-display">Sua Empresa</p>
-                <p id="workload-display">09:00 - 18:00</p>
-              </div>
-            </div>
             <button
               class="settings-btn"
               id="settings-btn"
@@ -61,21 +53,39 @@
               </svg>
             </button>
           </div>
-          <ul class="sidebar-nav" id="sidebar-nav">
-          </ul>
-          <div class="sidebar-footer" id="sidebar-footer">
-          </div>
+          <ul class="sidebar-nav" id="sidebar-nav"></ul>
+          <div class="sidebar-footer" id="sidebar-footer"></div>
         </nav>
 
         <main class="main-content">
           <header class="main-header">
-            <div class="search-box">
-              <img
-                src="icons/pesquisa.svg"
-                alt="Pesquisar"
-                class="search-icon"
-              />
-              <input type="text" id="search-input" placeholder="Search..." />
+            <div class="header-left-section">
+              <div class="search-box">
+                <img
+                  src="icons/pesquisa.svg"
+                  alt="Pesquisar"
+                  class="search-icon"
+                />
+                <input type="text" id="search-input" placeholder="Search..." />
+              </div>
+              <div class="social-links">
+                <a
+                  href="https://github.com/guilherme23x"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="GitHub"
+                >
+                  <img src="icons/github.svg" alt="GitHub" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/guilherme-gomes-da-silva/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="LinkedIn"
+                >
+                  <img src="icons/linkedin.svg" alt="LinkedIn" />
+                </a>
+              </div>
             </div>
             <button class="add-new-btn" id="add-card-header-btn">
               <img src="icons/adicionar.svg" alt="Adicionar" />
@@ -132,43 +142,60 @@
         </form>
       </div>
     </div>
-    
+
     <div id="edit-pages-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="close-edit-pages-btn">&times;</span>
-            <h2>Editar Páginas</h2>
-            <div id="edit-pages-list"></div>
-        </div>
+      <div class="modal-content">
+        <span class="close-btn" id="close-edit-pages-btn">&times;</span>
+        <h2>Editar Páginas</h2>
+        <div id="edit-pages-list"></div>
+      </div>
     </div>
 
     <div id="alert-modal" class="modal">
-        <div class="modal-content alert-modal-content">
-            <h2 id="alert-title">Aviso</h2>
-            <p id="alert-message"></p>
-            <div id="alert-buttons" class="alert-buttons"></div>
-        </div>
+      <div class="modal-content alert-modal-content">
+        <h2 id="alert-title">Aviso</h2>
+        <p id="alert-message"></p>
+        <div id="alert-buttons" class="alert-buttons"></div>
+      </div>
     </div>
 
     <div id="add-page-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="close-add-page-btn">&times;</span>
-            <h2>Adicionar Nova Página</h2>
-            <form id="add-page-form">
-                <div class="form-group">
-                    <label for="page-name-input">Nome da Página</label>
-                    <input type="text" id="page-name-input" required autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label for="page-icon-input" class="file-action-btn">Importar Ícone SVG (Opcional)</label>
-                    <input type="file" id="page-icon-input" accept=".svg,image/svg+xml" style="display: none;">
-                </div>
-                <button type="submit" class="alert-btn primary" style="width:100%; margin-top: 0.5rem;">Salvar</button>
-            </form>
-        </div>
+      <div class="modal-content">
+        <span class="close-btn" id="close-add-page-btn">&times;</span>
+        <h2>Adicionar Nova Página</h2>
+        <form id="add-page-form">
+          <div class="form-group">
+            <label for="page-name-input">Nome da Página</label>
+            <input
+              type="text"
+              id="page-name-input"
+              required
+              autocomplete="off"
+            />
+          </div>
+          <div class="form-group">
+            <label for="page-icon-input" class="file-action-btn"
+              >Importar Ícone SVG (Opcional)</label
+            >
+            <input
+              type="file"
+              id="page-icon-input"
+              accept=".svg,image/svg+xml"
+              style="display: none"
+            />
+          </div>
+          <button
+            type="submit"
+            class="alert-btn primary"
+            style="width: 100%; margin-top: 0.5rem"
+          >
+            Salvar
+          </button>
+        </form>
+      </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
-
