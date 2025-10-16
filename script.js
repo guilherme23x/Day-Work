@@ -432,6 +432,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
+  const showImportConfirm = () => {
+    const alertTitle = alertModal.querySelector("#alert-title");
+    const alertMessage = alertModal.querySelector("#alert-message");
+    const alertButtons = alertModal.querySelector("#alert-buttons");
+
+    alertTitle.textContent = "Importar Dados";
+    alertMessage.textContent =
+      "Já existem dados salvos. Como você deseja importar o novo arquivo?";
+
+    alertButtons.innerHTML = `
+        <button class="alert-btn secondary" id="import-cancel-btn">Cancelar</button>
+        <button class="alert-btn secondary" id="import-merge-btn">Mesclar</button>
+        <button class="alert-btn primary" id="import-replace-btn">Substituir</button>
+    `;
+
+    alertModal.classList.add("show");
+
+    return new Promise((resolve) => {
+      const replaceBtn = document.getElementById("import-replace-btn");
+      const mergeBtn = document.getElementById("import-merge-btn");
+      const cancelBtn = document.getElementById("import-cancel-btn");
+
+      const close = (result) => {
+        alertModal.classList.remove("show");
+        replaceBtn.removeEventListener("click", replaceHandler);
+        mergeBtn.removeEventListener("click", mergeHandler);
+        cancelBtn.removeEventListener("click", cancelHandler);
+        resolve(result);
+      };
+
+      const replaceHandler = () => close("replace");
+      const mergeHandler = () => close("merge");
+      const cancelHandler = () => close("cancel");
+
+      replaceBtn.addEventListener("click", replaceHandler);
+      mergeBtn.addEventListener("click", mergeHandler);
+      cancelBtn.addEventListener("click", cancelHandler);
+    });
+  };
+
   const openEditPagesModal = () => {
     const listEl = document.getElementById("edit-pages-list");
     listEl.innerHTML = "";
@@ -541,6 +581,7 @@ document.addEventListener("DOMContentLoaded", () => {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Erro ao exportar configurações:", error);
+      showCustomAlert("Ocorreu um erro ao exportar os dados.", "Erro");
     }
   };
 
@@ -549,7 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const settings = JSON.parse(e.target.result);
         if (
@@ -558,30 +599,85 @@ document.addEventListener("DOMContentLoaded", () => {
           settings.dashboardProfile &&
           settings.dashboardCategories
         ) {
-          localStorage.setItem(
-            "dashboardCards",
-            JSON.stringify(settings.dashboardCards)
+          const existingCards = JSON.parse(
+            localStorage.getItem("dashboardCards") || "[]"
           );
-          localStorage.setItem(
-            "dashboardCategories",
-            JSON.stringify(settings.dashboardCategories)
-          );
-          localStorage.setItem(
-            "dashboardProfile",
-            JSON.stringify(settings.dashboardProfile)
-          );
-          localStorage.setItem("dashboardBg", settings.dashboardBg || "");
-          localStorage.setItem(
-            "dashboardTheme",
-            settings.dashboardTheme || "light"
-          );
+
+          let importAction = "replace";
+          if (existingCards.length > 0) {
+            importAction = await showImportConfirm();
+          }
+
+          if (importAction === "cancel") {
+            importInput.value = "";
+            return;
+          }
+
+          if (importAction === "merge") {
+            const existingCategories = JSON.parse(
+              localStorage.getItem("dashboardCategories") || "[]"
+            );
+            const existingCategoryNames = new Set(
+              existingCategories.map((c) => c.name)
+            );
+            const newCategories = settings.dashboardCategories.filter(
+              (cat) => !existingCategoryNames.has(cat.name)
+            );
+            const mergedCategories = [...existingCategories, ...newCategories];
+
+            const createCardKey = (card) =>
+              `${card.title}|${card.url}|${card.category}`;
+            const cardMap = new Map(
+              existingCards.map((card) => [createCardKey(card), card])
+            );
+
+            settings.dashboardCards.forEach((importedCard) => {
+              const key = createCardKey(importedCard);
+              const existingCard = cardMap.get(key);
+              if (existingCard) {
+                existingCard.imageUrl = importedCard.imageUrl;
+              } else {
+                cardMap.set(key, {
+                  ...importedCard,
+                  id: Date.now() + Math.random(),
+                });
+              }
+            });
+
+            const mergedCards = Array.from(cardMap.values());
+            localStorage.setItem("dashboardCards", JSON.stringify(mergedCards));
+            localStorage.setItem(
+              "dashboardCategories",
+              JSON.stringify(mergedCategories)
+            );
+          } else {
+            localStorage.setItem(
+              "dashboardCards",
+              JSON.stringify(settings.dashboardCards)
+            );
+            localStorage.setItem(
+              "dashboardCategories",
+              JSON.stringify(settings.dashboardCategories)
+            );
+            localStorage.setItem(
+              "dashboardProfile",
+              JSON.stringify(settings.dashboardProfile)
+            );
+            localStorage.setItem("dashboardBg", settings.dashboardBg || "");
+            localStorage.setItem(
+              "dashboardTheme",
+              settings.dashboardTheme || "light"
+            );
+          }
+
           loadData();
           settingsModal.classList.remove("show");
         } else {
-          console.error("Arquivo de configuração inválido.");
+          await showCustomAlert("Arquivo de configuração inválido.", "Erro");
         }
       } catch (error) {
         console.error("Erro ao importar configurações:", error);
+        await showCustomAlert("Ocorreu um erro ao ler o arquivo.", "Erro");
       } finally {
         importInput.value = "";
       }
