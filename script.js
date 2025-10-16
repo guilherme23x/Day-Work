@@ -56,11 +56,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     allCards = savedCards ? JSON.parse(savedCards) : [];
     allCards.forEach((card, index) => {
-        if (card.order === undefined) card.order = index;
+      if (card.order === undefined) card.order = index;
     });
 
-    categories = savedCategories ? JSON.parse(savedCategories) : defaultCategories;
-    
+    categories = savedCategories
+      ? JSON.parse(savedCategories)
+      : defaultCategories;
+
     if (categories.length === 0) categories = defaultCategories;
 
     currentCategory = categories[0].id;
@@ -76,23 +78,23 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCards();
     updateCategoryTitle();
   };
-  
+
   const renderSidebar = () => {
-    sidebarNav.innerHTML = '';
-    categories.forEach(cat => {
-        const navItem = document.createElement('li');
-        navItem.className = 'nav-item';
-        navItem.dataset.category = cat.id;
-        navItem.innerHTML = `<a href="#" class="nav-link" title="${cat.name}"><img src="${cat.icon}" alt="${cat.name}"></a>`;
-        sidebarNav.appendChild(navItem);
+    sidebarNav.innerHTML = "";
+    categories.forEach((cat) => {
+      const navItem = document.createElement("li");
+      navItem.className = "nav-item";
+      navItem.dataset.category = cat.id;
+      navItem.innerHTML = `<a href="#" class="nav-link" title="${cat.name}"><img src="${cat.icon}" alt="${cat.name}"></a>`;
+      sidebarNav.appendChild(navItem);
     });
 
-    const addNavItem = document.createElement('li');
-    addNavItem.className = 'nav-item';
-    addNavItem.id = 'add-category-btn';
+    const addNavItem = document.createElement("li");
+    addNavItem.className = "nav-item";
+    addNavItem.id = "add-category-btn";
     addNavItem.innerHTML = `<a href="#" class="nav-link" title="Adicionar Página"><img src="icons/adicionar.svg" alt="Adicionar Página"></a>`;
     sidebarNav.appendChild(addNavItem);
-    
+
     sidebarFooter.innerHTML = `<button class="sidebar-action-btn" id="edit-pages-btn" title="Editar Páginas"><img src="icons/editar.svg" alt="Editar Páginas"></button>`;
 
     attachSidebarEventListeners();
@@ -100,58 +102,74 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const attachSidebarEventListeners = () => {
-    document.querySelectorAll('.nav-item[data-category]').forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentCategory = item.dataset.category;
-            updateActiveCategory();
-            updateCategoryTitle();
-            renderCards();
-        });
+    document.querySelectorAll(".nav-item[data-category]").forEach((item) => {
+      item.addEventListener("click", (e) => {
+        e.preventDefault();
+        currentCategory = item.dataset.category;
+        updateActiveCategory();
+        updateCategoryTitle();
+        renderCards();
+      });
     });
 
-    document.getElementById('add-category-btn').addEventListener('click', () => {
+    document
+      .getElementById("add-category-btn")
+      .addEventListener("click", () => {
         addPageForm.reset();
-        addPageModal.classList.add('show');
-        document.getElementById('page-name-input').focus();
-    });
+        addPageModal.classList.add("show");
+        document.getElementById("page-name-input").focus();
+      });
 
-    document.getElementById('edit-pages-btn').addEventListener('click', openEditPagesModal);
+    document
+      .getElementById("edit-pages-btn")
+      .addEventListener("click", openEditPagesModal);
   };
 
   const updateCategoryTitle = () => {
-    const category = categories.find(c => c.id === currentCategory);
-    if(category) categoryTitle.textContent = category.name;
+    const category = categories.find((c) => c.id === currentCategory);
+    if (category) categoryTitle.textContent = category.name;
   };
-  
-  const updateActiveCategory = () => {
-      document.querySelectorAll('.nav-item[data-category]').forEach(i => {
-          i.classList.toggle('active', i.dataset.category === currentCategory);
-      });
-  };
-  
-  const initSortable = () => {
-    if (sortable) {
-        sortable.destroy();
-    }
-    sortable = new Sortable(cardGrid, {
-        animation: 150,
-        ghostClass: 'sortable-ghost',
-        chosenClass: 'sortable-chosen',
-        onEnd: () => {
-            const orderedIds = Array.from(cardGrid.children).map(el => el.dataset.id);
-            const otherCards = allCards.filter(c => c.category !== currentCategory);
-            
-            const currentCategoryCards = orderedIds.map(id => allCards.find(c => c.id == id));
-            
-            currentCategoryCards.forEach((card, index) => {
-                if(card) card.order = index;
-            });
 
-            allCards = [...currentCategoryCards, ...otherCards];
-            saveData();
-        }
+  const updateActiveCategory = () => {
+    document.querySelectorAll(".nav-item[data-category]").forEach((i) => {
+      i.classList.toggle("active", i.dataset.category === currentCategory);
     });
+  };
+
+  const initSortable = () => {
+    const isMobile = window.innerWidth <= 768;
+
+    if (sortable) {
+      sortable.destroy();
+      sortable = null;
+    }
+
+    if (!isMobile) {
+      sortable = new Sortable(cardGrid, {
+        animation: 150,
+        ghostClass: "sortable-ghost",
+        chosenClass: "sortable-chosen",
+        onEnd: () => {
+          const orderedIds = Array.from(cardGrid.children).map(
+            (el) => el.dataset.id
+          );
+          const otherCards = allCards.filter(
+            (c) => c.category !== currentCategory
+          );
+
+          const currentCategoryCards = orderedIds.map((id) =>
+            allCards.find((c) => c.id == id)
+          );
+
+          currentCategoryCards.forEach((card, index) => {
+            if (card) card.order = index;
+          });
+
+          allCards = [...currentCategoryCards, ...otherCards];
+          saveData();
+        },
+      });
+    }
   };
 
   const renderCards = () => {
@@ -161,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
         c.category === currentCategory &&
         c.title.toLowerCase().includes(searchQuery)
     );
-    
+
     filteredCards.sort((a, b) => a.order - b.order);
 
     cardGrid.innerHTML = "";
@@ -179,16 +197,20 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
          <div class="card-hover-details">
             <p class="card-description">${card.description || ""}</p>
-            <a href="${card.url}" class="enter-btn" target="_blank" rel="noopener noreferrer">Acessar</a>
+            <a href="${
+              card.url
+            }" class="enter-btn" target="_blank" rel="noopener noreferrer">Acessar</a>
         </div>
         <div class="card-actions">
             <button class="action-btn edit-btn" title="Editar"><img src="icons/editar.svg" alt="Editar"></button>
             <button class="action-btn delete-btn" title="Excluir"><img src="icons/deletar.svg" alt="Excluir"></button>
         </div>`;
-      cardElement.querySelector(".delete-btn").addEventListener("click", (e) => {
-        e.stopPropagation();
-        deleteCard(card.id);
-      });
+      cardElement
+        .querySelector(".delete-btn")
+        .addEventListener("click", (e) => {
+          e.stopPropagation();
+          deleteCard(card.id);
+        });
       cardElement.querySelector(".edit-btn").addEventListener("click", (e) => {
         e.stopPropagation();
         openCardModal("edit", card.id);
@@ -200,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const openCardModal = (mode = "add", cardId = null) => {
-    const category = categories.find(c => c.id === currentCategory);
+    const category = categories.find((c) => c.id === currentCategory);
     const modalContent = `
         <div class="modal-content">
             <span class="close-btn" id="close-card-btn">&times;</span>
@@ -237,7 +259,8 @@ document.addEventListener("DOMContentLoaded", () => {
         modalTitle.textContent = "Editar Link";
         hiddenCardId.value = card.id;
         cardForm.querySelector("#title-input").value = card.title;
-        cardForm.querySelector("#description-input").value = card.description || "";
+        cardForm.querySelector("#description-input").value =
+          card.description || "";
         cardForm.querySelector("#url-input").value = card.url;
         if (card.imageUrl) {
           newCardImageData = card.imageUrl;
@@ -249,20 +272,39 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     } else {
-      modalTitle.textContent = `Adicionar em ${category ? category.name : ''}`;
+      modalTitle.textContent = `Adicionar em ${category ? category.name : ""}`;
     }
 
-    document.getElementById("close-card-btn").addEventListener("click", () => cardModal.classList.remove("show"));
-    cardForm.querySelector("#image-file-input").addEventListener("change", (e) => handleImageSelection(e.target.files[0], cardForm.querySelector("#image-preview"), cardForm.querySelector("#image-url-input")));
-    cardForm.querySelector("#image-url-input").addEventListener("input", () => handleImageUrlInput(cardForm.querySelector("#image-preview"), cardForm.querySelector("#image-url-input")));
+    document
+      .getElementById("close-card-btn")
+      .addEventListener("click", () => cardModal.classList.remove("show"));
+    cardForm
+      .querySelector("#image-file-input")
+      .addEventListener("change", (e) =>
+        handleImageSelection(
+          e.target.files[0],
+          cardForm.querySelector("#image-preview"),
+          cardForm.querySelector("#image-url-input")
+        )
+      );
+    cardForm
+      .querySelector("#image-url-input")
+      .addEventListener("input", () =>
+        handleImageUrlInput(
+          cardForm.querySelector("#image-preview"),
+          cardForm.querySelector("#image-url-input")
+        )
+      );
     cardForm.addEventListener("submit", handleCardFormSubmit);
   };
-  
+
   const handleCardFormSubmit = (e) => {
     e.preventDefault();
     const id = e.target.querySelector("#card-id").value;
     const title = e.target.querySelector("#title-input").value.trim();
-    const description = e.target.querySelector("#description-input").value.trim();
+    const description = e.target
+      .querySelector("#description-input")
+      .value.trim();
     let url = e.target.querySelector("#url-input").value.trim();
     const imageUrl = e.target.querySelector("#image-url-input").value.trim();
 
@@ -280,8 +322,15 @@ document.addEventListener("DOMContentLoaded", () => {
       if (cardIndex > -1)
         allCards[cardIndex] = { ...allCards[cardIndex], ...cardData };
     } else {
-      const newOrder = allCards.filter(c => c.category === currentCategory).length;
-      allCards.push({ id: Date.now(), category: currentCategory, order: newOrder, ...cardData });
+      const newOrder = allCards.filter(
+        (c) => c.category === currentCategory
+      ).length;
+      allCards.push({
+        id: Date.now(),
+        category: currentCategory,
+        order: newOrder,
+        ...cardData,
+      });
     }
     saveData();
     renderCards();
@@ -326,71 +375,71 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("dashboardTheme", theme);
   };
 
-    const showCustomAlert = (message, title = "Aviso") => {
-        const alertTitle = alertModal.querySelector('#alert-title');
-        const alertMessage = alertModal.querySelector('#alert-message');
-        const alertButtons = alertModal.querySelector('#alert-buttons');
+  const showCustomAlert = (message, title = "Aviso") => {
+    const alertTitle = alertModal.querySelector("#alert-title");
+    const alertMessage = alertModal.querySelector("#alert-message");
+    const alertButtons = alertModal.querySelector("#alert-buttons");
 
-        alertTitle.textContent = title;
-        alertMessage.textContent = message;
+    alertTitle.textContent = title;
+    alertMessage.textContent = message;
 
-        alertButtons.innerHTML = `<button class="alert-btn primary" id="alert-ok-btn">OK</button>`;
+    alertButtons.innerHTML = `<button class="alert-btn primary" id="alert-ok-btn">OK</button>`;
 
-        alertModal.classList.add('show');
+    alertModal.classList.add("show");
 
-        return new Promise((resolve) => {
-            const okBtn = document.getElementById('alert-ok-btn');
-            const closeHandler = () => {
-                alertModal.classList.remove('show');
-                okBtn.removeEventListener('click', closeHandler);
-                resolve(true);
-            };
-            okBtn.addEventListener('click', closeHandler);
-        });
-    };
+    return new Promise((resolve) => {
+      const okBtn = document.getElementById("alert-ok-btn");
+      const closeHandler = () => {
+        alertModal.classList.remove("show");
+        okBtn.removeEventListener("click", closeHandler);
+        resolve(true);
+      };
+      okBtn.addEventListener("click", closeHandler);
+    });
+  };
 
-    const showCustomConfirm = (message, title = "Confirmação") => {
-        const alertTitle = alertModal.querySelector('#alert-title');
-        const alertMessage = alertModal.querySelector('#alert-message');
-        const alertButtons = alertModal.querySelector('#alert-buttons');
+  const showCustomConfirm = (message, title = "Confirmação") => {
+    const alertTitle = alertModal.querySelector("#alert-title");
+    const alertMessage = alertModal.querySelector("#alert-message");
+    const alertButtons = alertModal.querySelector("#alert-buttons");
 
-        alertTitle.textContent = title;
-        alertMessage.textContent = message;
+    alertTitle.textContent = title;
+    alertMessage.textContent = message;
 
-        alertButtons.innerHTML = `
+    alertButtons.innerHTML = `
             <button class="alert-btn secondary" id="confirm-cancel-btn">Cancelar</button>
             <button class="alert-btn primary" id="confirm-ok-btn">Confirmar</button>
         `;
 
-        alertModal.classList.add('show');
+    alertModal.classList.add("show");
 
-        return new Promise((resolve) => {
-            const okBtn = document.getElementById('confirm-ok-btn');
-            const cancelBtn = document.getElementById('confirm-cancel-btn');
+    return new Promise((resolve) => {
+      const okBtn = document.getElementById("confirm-ok-btn");
+      const cancelBtn = document.getElementById("confirm-cancel-btn");
 
-            const close = (result) => {
-                alertModal.classList.remove('show');
-                okBtn.removeEventListener('click', okHandler);
-                cancelBtn.removeEventListener('click', cancelHandler);
-                resolve(result);
-            };
-            
-            const okHandler = () => close(true);
-            const cancelHandler = () => close(false);
+      const close = (result) => {
+        alertModal.classList.remove("show");
+        okBtn.removeEventListener("click", okHandler);
+        cancelBtn.removeEventListener("click", cancelHandler);
+        resolve(result);
+      };
 
-            okBtn.addEventListener('click', okHandler);
-            cancelBtn.addEventListener('click', cancelHandler);
-        });
-    };
-  
+      const okHandler = () => close(true);
+      const cancelHandler = () => close(false);
+
+      okBtn.addEventListener("click", okHandler);
+      cancelBtn.addEventListener("click", cancelHandler);
+    });
+  };
+
   const openEditPagesModal = () => {
-    const listEl = document.getElementById('edit-pages-list');
-    listEl.innerHTML = '';
+    const listEl = document.getElementById("edit-pages-list");
+    listEl.innerHTML = "";
 
-    categories.forEach(cat => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'edit-page-item';
-        itemEl.innerHTML = `
+    categories.forEach((cat) => {
+      const itemEl = document.createElement("div");
+      itemEl.className = "edit-page-item";
+      itemEl.innerHTML = `
             <div class="form-group">
                 <label for="title-${cat.id}">Título</label>
                 <input type="text" id="title-${cat.id}" value="${cat.name}">
@@ -401,68 +450,82 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <button class="delete-page-btn" data-id="${cat.id}">Excluir Página</button>
         `;
-        listEl.appendChild(itemEl);
+      listEl.appendChild(itemEl);
 
-        itemEl.querySelector(`#title-${cat.id}`).addEventListener('change', (e) => {
-            const category = categories.find(c => c.id === cat.id);
-            category.name = e.target.value;
-            saveData();
-            renderSidebar();
-            updateCategoryTitle();
-        });
-        
-        itemEl.querySelector(`#icon-upload-${cat.id}`).addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file && file.type === "image/svg+xml") {
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    const category = categories.find(c => c.id === cat.id);
-                    category.icon = evt.target.result;
-                    saveData();
-                    renderSidebar();
-                };
-                reader.readAsDataURL(file);
-            } else {
-                showCustomAlert("Por favor, selecione um arquivo SVG válido.");
-            }
+      itemEl
+        .querySelector(`#title-${cat.id}`)
+        .addEventListener("change", (e) => {
+          const category = categories.find((c) => c.id === cat.id);
+          category.name = e.target.value;
+          saveData();
+          renderSidebar();
+          updateCategoryTitle();
         });
 
-        itemEl.querySelector('.delete-page-btn').addEventListener('click', async (e) => {
-            await deleteCategory(e.target.dataset.id);
+      itemEl
+        .querySelector(`#icon-upload-${cat.id}`)
+        .addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file && file.type === "image/svg+xml") {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              const category = categories.find((c) => c.id === cat.id);
+              category.icon = evt.target.result;
+              saveData();
+              renderSidebar();
+            };
+            reader.readAsDataURL(file);
+          } else {
+            showCustomAlert("Por favor, selecione um arquivo SVG válido.");
+          }
+        });
+
+      itemEl
+        .querySelector(".delete-page-btn")
+        .addEventListener("click", async (e) => {
+          await deleteCategory(e.target.dataset.id);
         });
     });
 
-    editPagesModal.classList.add('show');
+    editPagesModal.classList.add("show");
   };
 
   const deleteCategory = async (categoryId) => {
-    if(categories.length <= 1) {
-        await showCustomAlert("Não é possível excluir a última página.");
-        return;
+    if (categories.length <= 1) {
+      await showCustomAlert("Não é possível excluir a última página.");
+      return;
     }
-    const confirmed = await showCustomConfirm("Tem certeza que deseja excluir esta página e todos os seus cards?");
-    if(confirmed) {
-        categories = categories.filter(c => c.id !== categoryId);
-        allCards = allCards.filter(card => card.category !== categoryId);
-        
-        if (currentCategory === categoryId) {
-            currentCategory = categories[0].id;
-        }
+    const confirmed = await showCustomConfirm(
+      "Tem certeza que deseja excluir esta página e todos os seus cards?"
+    );
+    if (confirmed) {
+      categories = categories.filter((c) => c.id !== categoryId);
+      allCards = allCards.filter((card) => card.category !== categoryId);
 
-        saveData();
-        renderSidebar();
-        renderCards();
-        updateCategoryTitle();
-        editPagesModal.classList.remove('show');
+      if (currentCategory === categoryId) {
+        currentCategory = categories[0].id;
+      }
+
+      saveData();
+      renderSidebar();
+      renderCards();
+      updateCategoryTitle();
+      editPagesModal.classList.remove("show");
     }
   };
 
   const exportSettings = () => {
     try {
       const settings = {
-        dashboardCards: JSON.parse(localStorage.getItem("dashboardCards") || "[]"),
-        dashboardCategories: JSON.parse(localStorage.getItem("dashboardCategories") || "[]"),
-        dashboardProfile: JSON.parse(localStorage.getItem("dashboardProfile") || "{}"),
+        dashboardCards: JSON.parse(
+          localStorage.getItem("dashboardCards") || "[]"
+        ),
+        dashboardCategories: JSON.parse(
+          localStorage.getItem("dashboardCategories") || "[]"
+        ),
+        dashboardProfile: JSON.parse(
+          localStorage.getItem("dashboardProfile") || "{}"
+        ),
         dashboardBg: localStorage.getItem("dashboardBg") || "",
         dashboardTheme: localStorage.getItem("dashboardTheme") || "light",
       };
@@ -471,7 +534,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "DayWork-Settings.json";
+      a.download = "dashboard-settings.json";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -489,12 +552,29 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.onload = (e) => {
       try {
         const settings = JSON.parse(e.target.result);
-        if (settings && settings.dashboardCards && settings.dashboardProfile && settings.dashboardCategories) {
-          localStorage.setItem("dashboardCards", JSON.stringify(settings.dashboardCards));
-          localStorage.setItem("dashboardCategories", JSON.stringify(settings.dashboardCategories));
-          localStorage.setItem("dashboardProfile", JSON.stringify(settings.dashboardProfile));
+        if (
+          settings &&
+          settings.dashboardCards &&
+          settings.dashboardProfile &&
+          settings.dashboardCategories
+        ) {
+          localStorage.setItem(
+            "dashboardCards",
+            JSON.stringify(settings.dashboardCards)
+          );
+          localStorage.setItem(
+            "dashboardCategories",
+            JSON.stringify(settings.dashboardCategories)
+          );
+          localStorage.setItem(
+            "dashboardProfile",
+            JSON.stringify(settings.dashboardProfile)
+          );
           localStorage.setItem("dashboardBg", settings.dashboardBg || "");
-          localStorage.setItem("dashboardTheme", settings.dashboardTheme || "light");
+          localStorage.setItem(
+            "dashboardTheme",
+            settings.dashboardTheme || "light"
+          );
           loadData();
           settingsModal.classList.remove("show");
         } else {
@@ -509,10 +589,30 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsText(file);
   };
 
-  settingsBtn.addEventListener("click", () => settingsModal.classList.add("show"));
-  closeSettingsBtn.addEventListener("click", () => settingsModal.classList.remove("show"));
-  closeEditPagesBtn.addEventListener("click", () => editPagesModal.classList.remove('show'));
-  closeAddPageBtn.addEventListener("click", () => addPageModal.classList.remove('show'));
+  const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
+  settingsBtn.addEventListener("click", () =>
+    settingsModal.classList.add("show")
+  );
+  closeSettingsBtn.addEventListener("click", () =>
+    settingsModal.classList.remove("show")
+  );
+  closeEditPagesBtn.addEventListener("click", () =>
+    editPagesModal.classList.remove("show")
+  );
+  closeAddPageBtn.addEventListener("click", () =>
+    addPageModal.classList.remove("show")
+  );
   addCardHeaderBtn.addEventListener("click", () => openCardModal("add"));
   exportBtn.addEventListener("click", exportSettings);
   importInput.addEventListener("change", importSettings);
@@ -527,35 +627,35 @@ document.addEventListener("DOMContentLoaded", () => {
     settingsModal.classList.remove("show");
   });
 
-  addPageForm.addEventListener('submit', (e) => {
+  addPageForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const nameInput = document.getElementById('page-name-input');
-    const iconInput = document.getElementById('page-icon-input');
+    const nameInput = document.getElementById("page-name-input");
+    const iconInput = document.getElementById("page-icon-input");
     const name = nameInput.value.trim();
     const file = iconInput.files[0];
 
     if (!name) return;
 
     const createAndAddCategory = (icon) => {
-        const newCategory = {
-            id: `cat_${Date.now()}`,
-            name: name,
-            icon: icon
-        };
-        categories.push(newCategory);
-        saveData();
-        renderSidebar();
-        addPageModal.classList.remove('show');
+      const newCategory = {
+        id: `cat_${Date.now()}`,
+        name: name,
+        icon: icon,
+      };
+      categories.push(newCategory);
+      saveData();
+      renderSidebar();
+      addPageModal.classList.remove("show");
     };
 
     if (file && file.type === "image/svg+xml") {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            createAndAddCategory(evt.target.result);
-        };
-        reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        createAndAddCategory(evt.target.result);
+      };
+      reader.readAsDataURL(file);
     } else {
-        createAndAddCategory('icons/folder.svg');
+      createAndAddCategory("icons/folder.svg");
     }
   });
 
@@ -576,14 +676,16 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   searchInput.addEventListener("input", renderCards);
+
+  window.addEventListener("resize", debounce(initSortable, 250));
+
   window.addEventListener("click", (e) => {
     if (e.target === cardModal) cardModal.classList.remove("show");
     if (e.target === settingsModal) settingsModal.classList.remove("show");
-    if (e.target === editPagesModal) editPagesModal.classList.remove('show');
-    if (e.target === alertModal) alertModal.classList.remove('show');
-    if (e.target === addPageModal) addPageModal.classList.remove('show');
+    if (e.target === editPagesModal) editPagesModal.classList.remove("show");
+    if (e.target === alertModal) alertModal.classList.remove("show");
+    if (e.target === addPageModal) addPageModal.classList.remove("show");
   });
 
   loadData();
 });
-

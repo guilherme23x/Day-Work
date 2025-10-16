@@ -1,5 +1,4 @@
-/* style.css */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
   --bg-color: #f0f5f2;
@@ -28,19 +27,19 @@
 }
 
 body[data-theme="dark"] {
-  --bg-color: #2b2b2b;
-  --container-bg: rgba(28, 28, 28, 0.9);
-  --sidebar-bg: rgba(43, 43, 43, 0.7);
+  --bg-color: #141414;
+  --container-bg: rgba(23, 23, 23, 0.9);
+  --sidebar-bg: rgba(12, 12, 12, 0.7);
   --card-bg: #1c1c1c;
   --text-color: #f8f8f8;
   --text-color-inverted: #1c1c1c;
   --subtle-text-color: #898989;
-  --border-color: #2b2b2b;
+  --border-color: #242424;
   --shadow-color: rgba(0, 0, 0, 0.2);
-  --input-bg: #2b2b2b;
+  --input-bg: #202020;
   --primary-color: #e8e8e8;
   --primary-color-hover: #ffffff;
-  --icon-filter: brightness(0) invert(0.8);
+  --icon-filter: brightness(1) invert(1);
   --card-gradient: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.8) 0%,
@@ -57,7 +56,7 @@ body[data-theme="dark"] {
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "MuseoModerno", sans-serif;
   color: var(--text-color);
   line-height: 1.5;
   background-color: var(--bg-color);
@@ -81,7 +80,7 @@ body {
   height: calc(100vh - var(--page-container-padding) * 2);
   max-height: 900px;
   background-color: var(--container-bg);
-  border-radius: 24px;
+  border-radius: 16px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 8px 10px -6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -112,7 +111,7 @@ body {
 #profile-pic {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: 30%;
   object-fit: cover;
   margin-right: 12px;
   flex-shrink: 0;
@@ -129,8 +128,9 @@ body {
   transform: translateY(-50%) scale(0);
   background: var(--container-bg);
   border: 1px solid var(--border-color);
-  border-radius: 50%;
+  border-radius: 30%;
   width: 28px;
+  font-family: "MuseoModerno";
   height: 28px;
   display: flex;
   align-items: center;
@@ -166,7 +166,7 @@ body {
 }
 .nav-item.active .nav-link img,
 .nav-item .nav-link:hover img {
-  filter: none;
+  filter: brightness(0.2) invert(0.3) grayscale(1);
 }
 
 .sidebar-footer {
@@ -177,23 +177,23 @@ body {
 }
 
 .sidebar-action-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--subtle-text-color);
-    padding: 0.75rem;
-    margin-top: 0.5rem;
-    border-radius: 8px;
-    width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--subtle-text-color);
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  width: 100%;
 }
 .sidebar-action-btn img {
-    width: 22px;
-    height: 22px;
-    filter: var(--icon-filter);
-    transition: filter 0.2s;
+  width: 22px;
+  height: 22px;
+  filter: var(--icon-filter);
+  transition: filter 0.2s;
 }
 .sidebar-action-btn:hover img {
-    filter: none;
+  filter: none;
 }
 
 .main-content {
@@ -247,6 +247,7 @@ body {
   color: var(--text-color-inverted);
   border: none;
   padding: 0.65rem 1.25rem;
+  font-family: "MuseoModerno";
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
@@ -279,7 +280,7 @@ body[data-theme="dark"] .add-new-btn img {
 
 .card {
   position: relative;
-  border-radius: 16px;
+  border-radius: 8px;
   overflow: hidden;
   background-size: cover;
   background-position: center;
@@ -289,12 +290,13 @@ body[data-theme="dark"] .add-new-btn img {
   cursor: grab;
 }
 .card.sortable-chosen {
-    cursor: grabbing;
-    box-shadow: 0 10px 15px -3px var(--shadow-color), 0 0 0 2px var(--primary-color);
+  cursor: grabbing;
+  box-shadow: 0 10px 15px -3px var(--shadow-color),
+    0 0 0 2px var(--primary-color);
 }
 .card.sortable-ghost {
-    opacity: 0.4;
-    background: var(--border-color);
+  opacity: 0.4;
+  background: var(--border-color);
 }
 
 .card::after {
@@ -352,6 +354,7 @@ body[data-theme="dark"] .add-new-btn img {
   background-color: var(--primary-color);
   color: var(--text-color-inverted);
   padding: 0.5rem 1rem;
+  font-family: "MuseoModerno";
   border-radius: 8px;
   text-decoration: none;
   font-weight: 500;
@@ -379,8 +382,9 @@ body[data-theme="dark"] .add-new-btn img {
 .action-btn {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(4px);
-  border: 1px solid var(--border-color);
-  border-radius: 50%;
+  border: none;
+  border-radius: 30%;
+  font-family: "MuseoModerno";
   width: 28px;
   height: 28px;
   display: flex;
@@ -408,7 +412,7 @@ body[data-theme="dark"] .action-btn {
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(17, 24, 39, 0.6);
+  background-color: rgba(21, 21, 21, 0.6);
   justify-content: center;
   align-items: center;
   backdrop-filter: blur(4px);
@@ -420,7 +424,7 @@ body[data-theme="dark"] .action-btn {
   background-color: var(--card-bg);
   color: var(--text-color);
   padding: 2rem;
-  border-radius: 12px;
+  border-radius: 8px;
   width: 90%;
   max-width: 500px;
   position: relative;
@@ -457,7 +461,7 @@ h2 {
   font-size: 1rem;
   background-color: var(--input-bg);
   color: var(--text-color);
-  font-family: "Inter", sans-serif;
+  font-family: "MuseoModerno", sans-serif;
   resize: none;
 }
 .form-group input:focus,
@@ -481,6 +485,7 @@ button[type="submit"] {
   border: none;
   background-color: var(--primary-color);
   color: var(--text-color-inverted);
+  font-family: "MuseoModerno";
   font-size: 1rem;
   font-weight: 600;
   border-radius: 8px;
@@ -560,7 +565,7 @@ input[type="file"] {
   border-radius: 8px;
   cursor: pointer;
   width: 100%;
-  font-family: "Inter", sans-serif;
+  font-family: "MuseoModerno", sans-serif;
   color: var(--text-color);
   font-size: 0.9rem;
   font-weight: 500;
@@ -571,30 +576,31 @@ input[type="file"] {
 }
 
 #edit-pages-list .edit-page-item {
-    background-color: var(--input-bg);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
 }
 .edit-page-item .form-group {
-    margin-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 .delete-page-btn {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--danger-color);
-    color: var(--danger-color);
-    background-color: transparent;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s, color 0.2s;
-    margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--danger-color);
+  color: var(--danger-color);
+  background-color: transparent;
+  border-radius: 8px;
+  font-family: "MuseoModerno";
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+  margin-top: 0.5rem;
 }
 .delete-page-btn:hover {
-    background-color: var(--danger-color);
-    color: white;
+  background-color: var(--danger-color);
+  color: white;
 }
 
 /* --- Scrollbar Styles --- */
@@ -620,48 +626,174 @@ body::-webkit-scrollbar-thumb,
 }
 
 @supports not selector(::-webkit-scrollbar) {
-  body, .main-content, .modal-content {
+  body,
+  .main-content,
+  .modal-content {
     scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }
 
 /* --- Alert Modal Styles --- */
 .alert-modal-content {
-    max-width: 400px;
-    text-align: center;
+  max-width: 400px;
+  text-align: center;
 }
 #alert-message {
-    margin-top: 0.5rem;
-    color: var(--subtle-text-color);
+  margin-top: 0.5rem;
+  color: var(--subtle-text-color);
 }
 .alert-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 .alert-btn {
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    min-width: 100px;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  min-width: 100px;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 .alert-btn.primary {
-    background-color: var(--primary-color);
-    color: var(--text-color-inverted);
+  background-color: var(--primary-color);
+  color: var(--text-color-inverted);
 }
 .alert-btn.primary:hover {
-    background-color: var(--primary-color-hover);
+  background-color: var(--primary-color-hover);
 }
 .alert-btn.secondary {
-    background-color: transparent;
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
 }
 .alert-btn.secondary:hover {
-    background-color: var(--border-color);
+  background-color: var(--border-color);
 }
 
+/* --- Responsive Styles --- */
+@media (max-width: 768px) {
+  :root {
+    --page-container-padding: 0;
+  }
+
+  .page-container {
+    padding: 0;
+  }
+
+  .dashboard-container {
+    flex-direction: column;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    width: 100%;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: 65px;
+    flex-direction: row;
+    padding: 0 0.5rem;
+    align-items: center;
+    order: 2;
+    border-top: 1px solid var(--border-color);
+    gap: 0.5rem;
+  }
+
+  .sidebar-profile {
+    display: none;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    height: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 8px;
+  }
+
+  .sidebar-nav::-webkit-scrollbar {
+    height: 4px;
+  }
+  .sidebar-nav::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 4px;
+  }
+  .sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .nav-item {
+    margin: 0;
+  }
+  .nav-item .nav-link {
+    padding: 0.5rem;
+  }
+
+  .sidebar-footer {
+    margin-top: 0;
+  }
+
+  .main-content {
+    order: 1;
+    padding: 1.5rem 1rem;
+  }
+
+  .main-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  #search-input {
+    width: 100%;
+  }
+
+  #category-title {
+    font-size: 1.25rem;
+  }
+
+  .card {
+    cursor: default;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .modal-content {
+    width: 90%;
+    max-height: 85vh;
+    padding: 1.5rem;
+  }
+
+  .alert-modal-content {
+    width: 80%;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .main-content {
+    padding: 1rem 0.75rem;
+  }
+
+  .add-new-btn span {
+    display: none;
+  }
+
+  .add-new-btn img {
+    margin-right: 0;
+  }
+}
