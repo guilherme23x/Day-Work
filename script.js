@@ -149,6 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
         animation: 150,
         ghostClass: "sortable-ghost",
         chosenClass: "sortable-chosen",
+        filter: ".enter-btn", // Esta linha impede que o botão "Acessar" inicie o arrasto
         onEnd: () => {
           const orderedIds = Array.from(cardGrid.children).map(
             (el) => el.dataset.id
@@ -617,35 +618,39 @@ document.addEventListener("DOMContentLoaded", () => {
             const existingCategories = JSON.parse(
               localStorage.getItem("dashboardCategories") || "[]"
             );
+            const mergedCategories = [...existingCategories];
             const existingCategoryNames = new Set(
               existingCategories.map((c) => c.name)
             );
-            const newCategories = settings.dashboardCategories.filter(
-              (cat) => !existingCategoryNames.has(cat.name)
-            );
-            const mergedCategories = [...existingCategories, ...newCategories];
+            settings.dashboardCategories.forEach((newCat) => {
+              if (!existingCategoryNames.has(newCat.name)) {
+                mergedCategories.push(newCat);
+              }
+            });
 
-            const createCardKey = (card) =>
-              `${card.title}|${card.url}|${card.category}`;
-            const cardMap = new Map(
-              existingCards.map((card) => [createCardKey(card), card])
-            );
+            let currentCards = [...existingCards];
+            settings.dashboardCards.forEach((newCard) => {
+              const existingCardMatch = currentCards.find(
+                (oldCard) =>
+                  oldCard.title === newCard.title &&
+                  oldCard.url === newCard.url &&
+                  oldCard.category === newCard.category
+              );
 
-            settings.dashboardCards.forEach((importedCard) => {
-              const key = createCardKey(importedCard);
-              const existingCard = cardMap.get(key);
-              if (existingCard) {
-                existingCard.imageUrl = importedCard.imageUrl;
+              if (existingCardMatch) {
+                existingCardMatch.imageUrl = newCard.imageUrl;
               } else {
-                cardMap.set(key, {
-                  ...importedCard,
+                currentCards.push({
+                  ...newCard,
                   id: Date.now() + Math.random(),
                 });
               }
             });
 
-            const mergedCards = Array.from(cardMap.values());
-            localStorage.setItem("dashboardCards", JSON.stringify(mergedCards));
+            localStorage.setItem(
+              "dashboardCards",
+              JSON.stringify(currentCards)
+            );
             localStorage.setItem(
               "dashboardCategories",
               JSON.stringify(mergedCategories)
