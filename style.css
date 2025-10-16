@@ -24,6 +24,7 @@
   --sb-track-color: #e8e8e8;
   --sb-thumb-color: #829d93;
   --sb-size: 8px;
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body[data-theme="dark"] {
@@ -96,6 +97,7 @@ body {
   padding: 1.5rem 1rem;
   flex-shrink: 0;
   position: relative;
+  transition: transform 0.5s var(--ease-out-quint);
 }
 
 .sidebar-profile {
@@ -106,7 +108,7 @@ body {
 }
 .sidebar-profile:hover .settings-btn {
   opacity: 1;
-  transform: scale(1);
+  transform: translateY(-50%) scale(1);
 }
 #profile-pic {
   width: 44px;
@@ -116,7 +118,12 @@ body {
   margin-right: 12px;
   flex-shrink: 0;
   border: 2px solid var(--border-color);
+  transition: transform 0.3s ease;
 }
+.profile-pic-container:hover #profile-pic {
+  transform: scale(1.1);
+}
+
 .profile-info {
   display: none;
 }
@@ -137,12 +144,16 @@ body {
   justify-content: center;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.2s, transform 0.2s;
+  transition: opacity 0.3s ease, transform 0.3s ease;
   color: var(--text-color);
+}
+.settings-btn:hover {
+  transform: translateY(-50%) scale(1.1) rotate(45deg);
 }
 
 .settings-btn svg {
   stroke: var(--subtle-text-color);
+  transition: transform 0.3s ease;
 }
 
 .sidebar-nav {
@@ -163,17 +174,30 @@ body {
   margin: 0.25rem 0;
   border-radius: 8px;
   text-decoration: none;
+  transition: background-color 0.2s ease;
 }
 .nav-item .nav-link img {
   width: 22px;
   height: 22px;
   flex-shrink: 0;
   filter: var(--icon-filter);
-  transition: filter 0.2s;
+  transition: filter 0.2s, transform 0.2s ease;
 }
+
+.nav-item.active .nav-link,
+.nav-item .nav-link:hover {
+  background-color: var(--primary-color);
+}
+
 .nav-item.active .nav-link img,
 .nav-item .nav-link:hover img {
-  filter: brightness(0.2) invert(0.3) grayscale(1);
+  filter: brightness(0) invert(1);
+  transform: scale(1.1);
+}
+
+body[data-theme="dark"] .nav-item.active .nav-link img,
+body[data-theme="dark"] .nav-item .nav-link:hover img {
+  filter: brightness(0);
 }
 
 .sidebar-footer {
@@ -192,15 +216,21 @@ body {
   margin-top: 0.5rem;
   border-radius: 8px;
   width: 100%;
+  transition: background-color 0.2s ease;
 }
 .sidebar-action-btn img {
   width: 22px;
   height: 22px;
   filter: var(--icon-filter);
-  transition: filter 0.2s;
+  transition: filter 0.2s, transform 0.2s ease;
 }
+.sidebar-action-btn:hover {
+  background-color: var(--border-color);
+}
+
 .sidebar-action-btn:hover img {
   filter: brightness(0.2) invert(0.3) grayscale(1);
+  transform: scale(1.1);
 }
 
 .main-content {
@@ -227,6 +257,7 @@ body {
   width: 20px;
   height: 20px;
   filter: var(--icon-filter);
+  transition: transform 0.3s ease;
 }
 #search-input {
   width: 300px;
@@ -237,14 +268,18 @@ body {
   color: var(--text-color);
   font-size: 1rem;
   outline: none;
-  transition: background-color 0.2s, box-shadow 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 #search-input::placeholder {
   color: var(--subtle-text-color);
 }
 #search-input:focus {
   background-color: var(--card-bg);
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 2px var(--primary-color);
+}
+#search-input:focus + .search-icon {
+  transform: translateY(-50%) scale(1.1);
 }
 
 .add-new-btn {
@@ -258,17 +293,23 @@ body {
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.2s ease;
 }
 .add-new-btn:hover {
   background-color: var(--primary-color-hover);
+  transform: scale(1.05);
 }
 .add-new-btn img {
   width: 20px;
   height: 20px;
   margin-right: 0.5rem;
   filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
 }
+.add-new-btn:hover img {
+  transform: rotate(90deg);
+}
+
 body[data-theme="dark"] .add-new-btn img {
   filter: brightness(0);
 }
@@ -295,6 +336,7 @@ body[data-theme="dark"] .add-new-btn img {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   aspect-ratio: 4 / 5;
   cursor: grab;
+  opacity: 0; /* Initial state for animation */
 }
 .card.sortable-chosen {
   cursor: grabbing;
@@ -314,7 +356,7 @@ body[data-theme="dark"] .add-new-btn img {
   transition: opacity 0.3s ease;
 }
 .card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px) scale(1.03);
   box-shadow: 0 10px 15px -3px var(--shadow-color);
 }
 .card-content {
@@ -338,7 +380,7 @@ body[data-theme="dark"] .add-new-btn img {
   background-color: var(--card-bg);
   padding: 1rem;
   transform: translateY(100%);
-  transition: transform 0.3s ease;
+  transition: transform 0.4s var(--ease-out-quint);
   z-index: 1;
 }
 .card:hover .card-hover-details {
@@ -365,10 +407,11 @@ body[data-theme="dark"] .add-new-btn img {
   border-radius: 8px;
   text-decoration: none;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 .enter-btn:hover {
   background-color: var(--primary-color-hover);
+  transform: scale(1.05);
 }
 
 .card-actions {
@@ -379,7 +422,7 @@ body[data-theme="dark"] .add-new-btn img {
   gap: 0.5rem;
   opacity: 0;
   transform: translateY(-10px);
-  transition: opacity 0.2s, transform 0.2s;
+  transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 3;
 }
 .card:hover .card-actions {
@@ -398,6 +441,10 @@ body[data-theme="dark"] .add-new-btn img {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.action-btn:hover {
+  transform: scale(1.2);
 }
 body[data-theme="dark"] .action-btn {
   background: rgba(0, 0, 0, 0.5);
@@ -406,9 +453,6 @@ body[data-theme="dark"] .action-btn {
   width: 14px;
   height: 14px;
   filter: var(--icon-filter);
-}
-.action-btn:hover img {
-  filter: none;
 }
 
 .modal {
@@ -423,9 +467,12 @@ body[data-theme="dark"] .action-btn {
   justify-content: center;
   align-items: center;
   backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 .modal.show {
   display: flex;
+  opacity: 1;
 }
 .modal-content {
   background-color: var(--card-bg);
@@ -438,6 +485,8 @@ body[data-theme="dark"] .action-btn {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   max-height: 80vh;
   overflow-y: auto;
+  opacity: 0;
+  transform: scale(0.95);
 }
 .close-btn {
   position: absolute;
@@ -447,7 +496,13 @@ body[data-theme="dark"] .action-btn {
   font-size: 2rem;
   font-weight: bold;
   cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
+.close-btn:hover {
+  transform: scale(1.2) rotate(90deg);
+  color: var(--text-color);
+}
+
 h2 {
   margin-bottom: 1.5rem;
 }
@@ -470,6 +525,7 @@ h2 {
   color: var(--text-color);
   font-family: "MuseoModerno", sans-serif;
   resize: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .form-group input:focus,
 .form-group textarea:focus {
@@ -497,11 +553,12 @@ button[type="submit"] {
   font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease, transform 0.2s ease;
   margin-top: 1rem;
 }
 button[type="submit"]:hover {
   background-color: var(--primary-color-hover);
+  transform: scale(1.02);
 }
 
 .file-upload-label {
@@ -515,6 +572,7 @@ button[type="submit"]:hover {
   border-radius: 6px;
   cursor: pointer;
   width: 100%;
+  transition: background-color 0.2s ease;
 }
 .file-upload-label:hover {
   background-color: var(--border-color);
@@ -523,7 +581,12 @@ button[type="submit"]:hover {
   width: 20px;
   height: 20px;
   filter: var(--icon-filter);
+  transition: transform 0.2s ease;
 }
+.file-upload-label:hover img {
+  transform: scale(1.1);
+}
+
 input[type="file"] {
   display: none;
 }
@@ -548,6 +611,7 @@ input[type="file"] {
   border: none;
   color: var(--subtle-text-color);
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 .theme-btn.active {
   background-color: var(--primary-color);
@@ -576,10 +640,12 @@ input[type="file"] {
   color: var(--text-color);
   font-size: 0.9rem;
   font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .file-action-btn:hover {
   background-color: var(--border-color);
+  transform: scale(1.02);
 }
 
 #edit-pages-list .edit-page-item {
@@ -588,7 +654,12 @@ input[type="file"] {
   padding: 1rem;
   margin-bottom: 1rem;
   border: 1px solid var(--border-color);
+  transition: box-shadow 0.2s ease;
 }
+#edit-pages-list .edit-page-item:focus-within {
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
 .edit-page-item .form-group {
   margin-bottom: 0.75rem;
 }
@@ -602,12 +673,13 @@ input[type="file"] {
   font-family: "MuseoModerno";
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
   margin-top: 0.5rem;
 }
 .delete-page-btn:hover {
   background-color: var(--danger-color);
   color: white;
+  transform: scale(1.02);
 }
 
 /* --- Scrollbar Styles --- */
@@ -662,8 +734,13 @@ body::-webkit-scrollbar-thumb,
   cursor: pointer;
   font-weight: 500;
   min-width: 100px;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease, transform 0.2s ease;
 }
+.alert-btn:hover {
+  transform: scale(1.05);
+}
+
 .alert-btn.primary {
   background-color: var(--primary-color);
   color: var(--text-color-inverted);
@@ -820,10 +897,11 @@ body::-webkit-scrollbar-thumb,
   height: 24px;
   filter: var(--icon-filter);
   opacity: 0.7;
-  transition: opacity 0.2s ease, filter 0.2s ease;
+  transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
 }
 
 .social-links a:hover img {
   opacity: 1;
   filter: brightness(0.2) invert(0.3) grayscale(1);
+  transform: scale(1.2);
 }

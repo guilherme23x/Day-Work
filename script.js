@@ -36,6 +36,35 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: "study", name: "Estudos", icon: "icons/book.svg" },
   ];
 
+  const openModal = (modalElement) => {
+    modalElement.classList.add("show");
+    anime({
+      targets: modalElement.querySelector(".modal-content"),
+      scale: [0.9, 1],
+      opacity: [0, 1],
+      translateY: ["15px", "0px"],
+      duration: 400,
+      easing: "easeOutCubic",
+    });
+  };
+
+  const closeModal = (modalElement) => {
+    anime({
+      targets: modalElement.querySelector(".modal-content"),
+      scale: [1, 0.9],
+      opacity: [1, 0],
+      translateY: ["0px", "15px"],
+      duration: 300,
+      easing: "easeInCubic",
+      complete: () => {
+        modalElement.classList.remove("show");
+        if (modalElement === cardModal) {
+          cardModal.innerHTML = "";
+        }
+      },
+    });
+  };
+
   const saveData = () => {
     localStorage.setItem("dashboardCards", JSON.stringify(allCards));
     localStorage.setItem("dashboardCategories", JSON.stringify(categories));
@@ -116,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .getElementById("add-category-btn")
       .addEventListener("click", () => {
         addPageForm.reset();
-        addPageModal.classList.add("show");
+        openModal(addPageModal);
         document.getElementById("page-name-input").focus();
       });
 
@@ -127,7 +156,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const updateCategoryTitle = () => {
     const category = categories.find((c) => c.id === currentCategory);
-    if (category) categoryTitle.textContent = category.name;
+    if (category) {
+      const oldTitle = categoryTitle.textContent;
+      if (oldTitle !== category.name) {
+        anime({
+          targets: categoryTitle,
+          opacity: [1, 0],
+          duration: 200,
+          easing: "easeInQuad",
+          complete: () => {
+            categoryTitle.textContent = category.name;
+            anime({
+              targets: categoryTitle,
+              opacity: [0, 1],
+              duration: 200,
+              easing: "easeOutQuad",
+            });
+          },
+        });
+      }
+    }
   };
 
   const updateActiveCategory = () => {
@@ -149,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
         animation: 150,
         ghostClass: "sortable-ghost",
         chosenClass: "sortable-chosen",
-        filter: ".enter-btn", // Esta linha impede que o botão "Acessar" inicie o arrasto
+        filter: ".enter-btn",
         onEnd: () => {
           const orderedIds = Array.from(cardGrid.children).map(
             (el) => el.dataset.id
@@ -174,52 +222,76 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderCards = () => {
-    const searchQuery = searchInput.value.toLowerCase();
-    let filteredCards = allCards.filter(
-      (c) =>
-        c.category === currentCategory &&
-        c.title.toLowerCase().includes(searchQuery)
-    );
+    anime({
+      targets: ".card",
+      opacity: 0,
+      scale: 0.9,
+      duration: 300,
+      easing: "easeInQuad",
+      complete: () => {
+        const searchQuery = searchInput.value.toLowerCase();
+        let filteredCards = allCards.filter(
+          (c) =>
+            c.category === currentCategory &&
+            c.title.toLowerCase().includes(searchQuery)
+        );
 
-    filteredCards.sort((a, b) => a.order - b.order);
+        filteredCards.sort((a, b) => a.order - b.order);
 
-    cardGrid.innerHTML = "";
-    filteredCards.forEach((card) => {
-      const cardElement = document.createElement("div");
-      cardElement.className = "card";
-      cardElement.dataset.id = card.id;
-      if (card.imageUrl) {
-        cardElement.style.backgroundImage = `url('${card.imageUrl}')`;
-      }
+        cardGrid.innerHTML = "";
+        filteredCards.forEach((card) => {
+          const cardElement = document.createElement("div");
+          cardElement.className = "card";
+          cardElement.dataset.id = card.id;
+          if (card.imageUrl) {
+            cardElement.style.backgroundImage = `url('${card.imageUrl}')`;
+          }
 
-      cardElement.innerHTML = `
-        <div class="card-content">
-            <h3 class="card-title">${card.title}</h3>
-        </div>
-         <div class="card-hover-details">
-            <p class="card-description">${card.description || ""}</p>
-            <a href="${
-              card.url
-            }" class="enter-btn" target="_blank" rel="noopener noreferrer">Acessar</a>
-        </div>
-        <div class="card-actions">
-            <button class="action-btn edit-btn" title="Editar"><img src="icons/editar.svg" alt="Editar"></button>
-            <button class="action-btn delete-btn" title="Excluir"><img src="icons/deletar.svg" alt="Excluir"></button>
-        </div>`;
-      cardElement
-        .querySelector(".delete-btn")
-        .addEventListener("click", (e) => {
-          e.stopPropagation();
-          deleteCard(card.id);
+          cardElement.innerHTML = `
+            <div class="card-content">
+                <h3 class="card-title">${card.title}</h3>
+            </div>
+             <div class="card-hover-details">
+                <p class="card-description">${card.description || ""}</p>
+                <a href="${
+                  card.url
+                }" class="enter-btn" target="_blank" rel="noopener noreferrer">Acessar</a>
+            </div>
+            <div class="card-actions">
+                <button class="action-btn edit-btn" title="Editar"><img src="icons/editar.svg" alt="Editar"></button>
+                <button class="action-btn delete-btn" title="Excluir"><img src="icons/deletar.svg" alt="Excluir"></button>
+            </div>`;
+          cardElement
+            .querySelector(".delete-btn")
+            .addEventListener("click", (e) => {
+              e.stopPropagation();
+              deleteCard(card.id);
+            });
+          cardElement
+            .querySelector(".edit-btn")
+            .addEventListener("click", (e) => {
+              e.stopPropagation();
+              openCardModal("edit", card.id);
+            });
+          cardGrid.appendChild(cardElement);
         });
-      cardElement.querySelector(".edit-btn").addEventListener("click", (e) => {
-        e.stopPropagation();
-        openCardModal("edit", card.id);
-      });
-      cardGrid.appendChild(cardElement);
-    });
 
-    initSortable();
+        anime({
+          targets: ".card",
+          opacity: [0, 1],
+          scale: [0.95, 1],
+          translateY: [20, 0],
+          delay: anime.stagger(75, {
+            grid: [Math.ceil(filteredCards.length / 4), filteredCards.length],
+            from: "first",
+          }),
+          duration: 500,
+          easing: "easeOutQuint",
+        });
+
+        initSortable();
+      },
+    });
   };
 
   const openCardModal = (mode = "add", cardId = null) => {
@@ -246,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </form>
         </div>`;
     cardModal.innerHTML = modalContent;
-    cardModal.classList.add("show");
+    openModal(cardModal);
 
     const cardForm = document.getElementById("card-form");
     const hiddenCardId = document.getElementById("card-id");
@@ -278,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document
       .getElementById("close-card-btn")
-      .addEventListener("click", () => cardModal.classList.remove("show"));
+      .addEventListener("click", () => closeModal(cardModal));
     cardForm
       .querySelector("#image-file-input")
       .addEventListener("change", (e) =>
@@ -335,7 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     saveData();
     renderCards();
-    cardModal.classList.remove("show");
+    closeModal(cardModal);
   };
 
   const handleImageSelection = (file, previewEl, urlInputEl) => {
@@ -386,12 +458,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     alertButtons.innerHTML = `<button class="alert-btn primary" id="alert-ok-btn">OK</button>`;
 
-    alertModal.classList.add("show");
+    openModal(alertModal);
 
     return new Promise((resolve) => {
       const okBtn = document.getElementById("alert-ok-btn");
       const closeHandler = () => {
-        alertModal.classList.remove("show");
+        closeModal(alertModal);
         okBtn.removeEventListener("click", closeHandler);
         resolve(true);
       };
@@ -412,14 +484,14 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="alert-btn primary" id="confirm-ok-btn">Confirmar</button>
         `;
 
-    alertModal.classList.add("show");
+    openModal(alertModal);
 
     return new Promise((resolve) => {
       const okBtn = document.getElementById("confirm-ok-btn");
       const cancelBtn = document.getElementById("confirm-cancel-btn");
 
       const close = (result) => {
-        alertModal.classList.remove("show");
+        closeModal(alertModal);
         okBtn.removeEventListener("click", okHandler);
         cancelBtn.removeEventListener("click", cancelHandler);
         resolve(result);
@@ -448,7 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <button class="alert-btn primary" id="import-replace-btn">Substituir</button>
     `;
 
-    alertModal.classList.add("show");
+    openModal(alertModal);
 
     return new Promise((resolve) => {
       const replaceBtn = document.getElementById("import-replace-btn");
@@ -456,7 +528,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const cancelBtn = document.getElementById("import-cancel-btn");
 
       const close = (result) => {
-        alertModal.classList.remove("show");
+        closeModal(alertModal);
         replaceBtn.removeEventListener("click", replaceHandler);
         mergeBtn.removeEventListener("click", mergeHandler);
         cancelBtn.removeEventListener("click", cancelHandler);
@@ -528,7 +600,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    editPagesModal.classList.add("show");
+    openModal(editPagesModal);
   };
 
   const deleteCategory = async (categoryId) => {
@@ -551,7 +623,7 @@ document.addEventListener("DOMContentLoaded", () => {
       renderSidebar();
       renderCards();
       updateCategoryTitle();
-      editPagesModal.classList.remove("show");
+      closeModal(editPagesModal);
     }
   };
 
@@ -676,7 +748,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           loadData();
-          settingsModal.classList.remove("show");
+          closeModal(settingsModal);
         } else {
           await showCustomAlert("Arquivo de configuração inválido.", "Erro");
         }
@@ -702,18 +774,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   };
 
-  settingsBtn.addEventListener("click", () =>
-    settingsModal.classList.add("show")
-  );
-  closeSettingsBtn.addEventListener("click", () =>
-    settingsModal.classList.remove("show")
-  );
-  closeEditPagesBtn.addEventListener("click", () =>
-    editPagesModal.classList.remove("show")
-  );
-  closeAddPageBtn.addEventListener("click", () =>
-    addPageModal.classList.remove("show")
-  );
+  settingsBtn.addEventListener("click", () => openModal(settingsModal));
+  closeSettingsBtn.addEventListener("click", () => closeModal(settingsModal));
+  closeEditPagesBtn.addEventListener("click", () => closeModal(editPagesModal));
+  closeAddPageBtn.addEventListener("click", () => closeModal(addPageModal));
   addCardHeaderBtn.addEventListener("click", () => openCardModal("add"));
   exportBtn.addEventListener("click", exportSettings);
   importInput.addEventListener("change", importSettings);
@@ -725,7 +789,7 @@ document.addEventListener("DOMContentLoaded", () => {
   settingsForm.addEventListener("submit", (e) => {
     e.preventDefault();
     saveData();
-    settingsModal.classList.remove("show");
+    closeModal(settingsModal);
   });
 
   addPageForm.addEventListener("submit", (e) => {
@@ -746,7 +810,7 @@ document.addEventListener("DOMContentLoaded", () => {
       categories.push(newCategory);
       saveData();
       renderSidebar();
-      addPageModal.classList.remove("show");
+      closeModal(addPageModal);
     };
 
     if (file && file.type === "image/svg+xml") {
@@ -781,12 +845,45 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", debounce(initSortable, 250));
 
   window.addEventListener("click", (e) => {
-    if (e.target === cardModal) cardModal.classList.remove("show");
-    if (e.target === settingsModal) settingsModal.classList.remove("show");
-    if (e.target === editPagesModal) editPagesModal.classList.remove("show");
-    if (e.target === alertModal) alertModal.classList.remove("show");
-    if (e.target === addPageModal) addPageModal.classList.remove("show");
+    if (e.target === cardModal) closeModal(cardModal);
+    if (e.target === settingsModal) closeModal(settingsModal);
+    if (e.target === editPagesModal) closeModal(editPagesModal);
+    if (e.target === alertModal) {
+      // Don't close alert on bg click, only via buttons
+    }
+    if (e.target === addPageModal) closeModal(addPageModal);
   });
 
+  const initPageAnimation = () => {
+    const tl = anime.timeline({
+      easing: "easeOutQuint",
+    });
+    tl.add({
+      targets: ".sidebar",
+      translateX: ["-100%", "0%"],
+      duration: 800,
+    })
+      .add(
+        {
+          targets: [".main-header", "#category-title"],
+          opacity: [0, 1],
+          translateY: [-20, 0],
+          duration: 600,
+        },
+        "-=400"
+      )
+      .add(
+        {
+          targets: ".social-links a",
+          opacity: [0, 1],
+          translateY: [-20, 0],
+          duration: 500,
+          delay: anime.stagger(100),
+        },
+        "-=500"
+      );
+  };
+
   loadData();
+  initPageAnimation();
 });
