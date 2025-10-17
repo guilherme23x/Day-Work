@@ -762,6 +762,12 @@ body::-webkit-scrollbar-thumb,
   :root {
     --page-container-padding: 0;
   }
+.dashboard-container {
+    
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
 
   .page-container {
     padding: 0;
@@ -861,6 +867,12 @@ body::-webkit-scrollbar-thumb,
 }
 
 @media (max-width: 480px) {
+.dashboard-container {
+    /* ... suas outras regras existentes ... */
+    height: 100dvh;
+    max-height: 100dvh; /* Garante que não ultrapasse a altura dinâmica */
+    border-radius: 0;
+  }
   .card-grid {
     grid-template-columns: 1fr;
   }
